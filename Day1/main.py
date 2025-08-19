@@ -4,8 +4,8 @@ from typing import Annotated
 
 from fastapi import FastAPI, HTTPException, Path, Query
 
-from Day1.app.schemas.users import UserCreateSchema, UserUpdateSchema, UserSearchParams, UserResponse
-from app.models.users import UserModel
+from Day2.app.schemas.users import UserCreateSchema, UserUpdateSchema, UserSearchParams, UserResponse
+from Day2.app.models.users import UserModel
 
 app = FastAPI()
 
@@ -13,7 +13,7 @@ UserModel.create_dummy()  # API 테스트를 위한 더미를 생성하는 메�
 
 
 @app.get("/")
-def root():
+def root() -> dict[str, str]:
     return {"message": "Hello World"}
 
 
@@ -59,7 +59,7 @@ def delete_user(user_id: int = Path(gt=0)) -> dict[str, str]:
 
 
 @app.get("/users/search", response_model=list[UserResponse])  # 유저 검색
-def search_users(params: Annotated[UserSearchParams, Query()]):
+def search_users(params: Annotated[UserSearchParams, Query()]) -> list[UserResponse]:
     valid_query = {key: value for key, value in params.model_dump().items() if value is not None}
     if filtered_user_list := UserModel.filter(**valid_query):
         return [UserResponse.model_validate(user) for user in filtered_user_list]
