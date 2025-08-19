@@ -44,9 +44,9 @@ def read_movie(movie_id: int = Path(gt=0)) -> MovieResponse:
 
 
 @app.patch("/movie/{movie_id}", response_model=MovieResponse, status_code=200)  # 영화 갱신
-def update_movie(movie: MovieUpdateParams, movie_id: int = Path(gt=0)) -> MovieResponse:
-    if movie := MovieModel.get(movie_id=movie_id):
-        movie.upate(**movie.model_dump())
+def update_movie(data: MovieUpdateParams, movie_id: int = Path(gt=0)) -> MovieResponse:
+    if movie := MovieModel.get(id=movie_id):
+        movie.upate(**data.model_dump())
         return MovieResponse.model_validate(movie)
     else:
         raise HTTPException(status_code=404, detail="Movie not found")
@@ -54,8 +54,8 @@ def update_movie(movie: MovieUpdateParams, movie_id: int = Path(gt=0)) -> MovieR
 
 @app.delete("/movie/{movie_id}", status_code=204)
 async def delete_movie(movie_id: int = Path(gt=0)) -> None:
-    if movie := MovieModel.get(movie_id=movie_id):
-        MovieModel.delete()
+    if movie := MovieModel.get(id=movie_id):
+        movie.delete()
     else:
         raise HTTPException(status_code=404, detail="Movie not found")
 
