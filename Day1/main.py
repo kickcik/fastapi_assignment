@@ -35,7 +35,7 @@ def get_user(user_id: int = Path(gt=0)) -> UserResponse:
         raise HTTPException(status_code=404, detail='No users found')
 
 
-@app.put('/users/{user_id}', response_model=UserResponse) # 유저 정보 갱신
+@app.patch('/users/{user_id}', response_model=UserResponse) # 유저 정보 갱신
 def update_user(user_data: UserUpdateSchema, user_id: int = Path(gt=0)) -> UserResponse:
     if user:= UserModel.get(id=user_id):
         # UserUpdateSchema로 변환된 객체를 model_dump()로 파이썬 딕셔너리로 변환 후 ** 언팩킹하여 키워드 인자로 변환
