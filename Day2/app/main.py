@@ -1,13 +1,11 @@
 # main.py
 
-from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, Path, Query
+from fastapi import FastAPI
 
 from Day2.app.models.movies import MovieModel
 from Day2.app.router.movies import movie_router
 from Day2.app.router.users import user_router
-from Day2.app.schemas.movies import MovieResponse, CreateMovieRequest, MovieSearchParams, MovieUpdateParams
 from Day2.app.models.users import UserModel
 
 app = FastAPI()

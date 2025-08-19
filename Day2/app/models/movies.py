@@ -5,7 +5,7 @@ from typing import ClassVar, List, Any
 
 
 class MovieModel:
-    _data: ClassVar[List['MovieModel']] = []  # 데이터를 저장할 리스트
+    _data: ClassVar[List["MovieModel"]] = []  # 데이터를 저장할 리스트
     _id_counter: ClassVar[int] = 1  # ID 자동 증가
 
     def __init__(self, title: str, playtime: int, genre: list[str]) -> None:
@@ -19,12 +19,12 @@ class MovieModel:
         MovieModel._id_counter += 1
 
     @classmethod
-    def create(cls, title: str, playtime: int, genre: list[str]) -> 'MovieModel':
+    def create(cls, title: str, playtime: int, genre: list[str]) -> "MovieModel":
         """새로운 영화 추가"""
         return cls(title, playtime, genre)
 
     @classmethod
-    def get(cls, **kwargs: Any) -> 'MovieModel | None':
+    def get(cls, **kwargs: Any) -> "MovieModel | None":
         """조건에 맞는 단일 영화 반환 (없으면 None)"""
         for movie in cls._data:
             if all(getattr(movie, key) == value for key, value in kwargs.items()):
@@ -32,7 +32,7 @@ class MovieModel:
         return None
 
     @classmethod
-    def filter(cls, **kwargs: Any) -> List['MovieModel']:
+    def filter(cls, **kwargs: Any) -> List["MovieModel"]:
         """조건에 맞는 모든 영화 리스트 반환"""
         result = [
             movie
@@ -55,7 +55,7 @@ class MovieModel:
             MovieModel._data.remove(self)
 
     @classmethod
-    def all(cls) -> List['MovieModel']:
+    def all(cls) -> List["MovieModel"]:
         """전체 영화 리스트 반환"""
         return cls._data
 

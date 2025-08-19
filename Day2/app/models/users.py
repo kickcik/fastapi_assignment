@@ -7,7 +7,7 @@ from Day2.app.schemas.users import GenderName
 
 
 class UserModel:
-    _data: ClassVar[List['UserModel']] = []  # 전체 사용자 데이터를 저장하는 리스트
+    _data: ClassVar[List["UserModel"]] = []  # 전체 사용자 데이터를 저장하는 리스트
     _id_counter: ClassVar[int] = 1  # ID 자동 증가를 위한 카운터
 
     def __init__(self, username: str, age: int, gender: GenderName) -> None:
@@ -21,12 +21,12 @@ class UserModel:
         UserModel._id_counter += 1
 
     @classmethod
-    def create(cls, username: str, age: int, gender: GenderName) -> 'UserModel':
+    def create(cls, username: str, age: int, gender: GenderName) -> "UserModel":
         """새로운 유저 추가"""
         return cls(username, age, gender)
 
     @classmethod
-    def get(cls, **kwargs: Any) -> 'UserModel | None':
+    def get(cls, **kwargs: Any) -> "UserModel | None":
         """단일 객체를 반환 (없으면 None)"""
         for user in cls._data:
             if all(getattr(user, key) == value for key, value in kwargs.items()):
@@ -34,7 +34,7 @@ class UserModel:
         return None
 
     @classmethod
-    def filter(cls, **kwargs: Any) -> List['UserModel']:
+    def filter(cls, **kwargs: Any) -> List["UserModel"]:
         """조건에 맞는 객체 리스트 반환"""
         return [user for user in cls._data if all(getattr(user, key) == value for key, value in kwargs.items())]
 
@@ -51,7 +51,7 @@ class UserModel:
             UserModel._data.remove(self)
 
     @classmethod
-    def all(cls) -> List['UserModel']:
+    def all(cls) -> List["UserModel"]:
         """모든 사용자 반환"""
         return cls._data
 
