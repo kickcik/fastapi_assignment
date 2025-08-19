@@ -21,7 +21,7 @@ class UserUpdateSchema(BaseModel):
 
 
 class UserSearchParams(BaseModel):
-    model_config = {'extra':'forbid'}
+    model_config = {"extra": "forbid"}
 
     username: str | None = None
     age: int | None = None
@@ -34,6 +34,4 @@ class UserResponse(BaseModel):
     age: int
     gender: GenderName
 
-    model_config = {
-        "from_attributes": True  # from_orm 대신
-    }
+    model_config = {"from_attributes": True}  # from_orm 대신

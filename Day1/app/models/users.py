@@ -19,12 +19,12 @@ class UserModel:
 
     @classmethod
     def create(cls, username, age, gender):
-        """ 새로운 유저 추가 """
+        """새로운 유저 추가"""
         return cls(username, age, gender)
 
     @classmethod
     def get(cls, **kwargs):
-        """ 단일 객체를 반환 (없으면 None) """
+        """단일 객체를 반환 (없으면 None)"""
         for user in cls._data:
             if all(getattr(user, key) == value for key, value in kwargs.items()):
                 return user
@@ -32,15 +32,11 @@ class UserModel:
 
     @classmethod
     def filter(cls, **kwargs):
-        """ 조건에 맞는 객체 리스트 반환 """
-        return [
-            user
-            for user in cls._data
-            if all(getattr(user, key) == value for key, value in kwargs.items())
-        ]
+        """조건에 맞는 객체 리스트 반환"""
+        return [user for user in cls._data if all(getattr(user, key) == value for key, value in kwargs.items())]
 
     def update(self, **kwargs):
-        """ 객체의 필드 업데이트 """
+        """객체의 필드 업데이트"""
         for key, value in kwargs.items():
             if hasattr(self, key):
                 if value is not None:
@@ -53,13 +49,13 @@ class UserModel:
 
     @classmethod
     def all(cls):
-        """ 모든 사용자 반환 """
+        """모든 사용자 반환"""
         return cls._data
 
     @classmethod
     def create_dummy(cls):
         for i in range(1, 11):
-            cls(username=f'dummy{i}', age=15 + i, gender=random.choice(['male', 'female']))
+            cls(username=f"dummy{i}", age=15 + i, gender=random.choice(["male", "female"]))
 
     def __repr__(self):
         return f"UserModel(id={self.id}, username='{self.username}', age={self.age}, gender='{self.gender}')"
