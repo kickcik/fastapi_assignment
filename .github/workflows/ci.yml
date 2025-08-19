@@ -18,7 +18,7 @@ jobs:
 
       - name: Cache Poetry
         id: cache-poetry
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           key: poetry-1.8.5
           path: ~/.local/ # poetry 는 ~/.local 에 설치되므로, 해당 디렉터리를 캐시합니다.
@@ -33,7 +33,7 @@ jobs:
 
       - name: Cache dependencies
         id: cache-venv
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # 파이썬 버전이 바뀌었을 때, lock 파일이나 toml 파일이 바뀌었을때 종속성을 재설치합니다.
           # 바뀐 것이 없는 경우에는 캐싱된 종속성을 사용합니다.
@@ -69,7 +69,7 @@ jobs:
 
       - name: Cache Poetry
         id: cache-poetry
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           key: poetry-1.8.5
           path: ~/.local/
@@ -84,7 +84,7 @@ jobs:
 
       - name: Cache dependencies
         id: cache-venv
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           key: python-${{ steps.setup-python.outputs.python-version }}-poetry-lock-${{ hashFiles('poetry.lock') }}-toml-${{ hashFiles('pyproject.toml') }}-poetry-1.8.5
           path: /home/runner/.cache/pypoetry/virtualenvs/
