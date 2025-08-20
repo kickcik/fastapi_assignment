@@ -4,13 +4,13 @@
 from fastapi import FastAPI
 
 from Day2.app.models.movies import MovieModel
+from Day2.app.models.users import UserModel
 from Day2.app.router.movies import movie_router
 from Day2.app.router.users import user_router
-from Day2.app.models.users import UserModel
 
 app = FastAPI()
 
-# include router in app
+# include routers in app
 app.include_router(user_router)
 app.include_router(movie_router)
 

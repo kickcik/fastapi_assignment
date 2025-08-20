@@ -1,7 +1,7 @@
 # app/models/users.py
 
 import random
-from typing import ClassVar, List, Any
+from typing import Any, ClassVar, List
 
 from Day2.app.schemas.users import GenderName
 

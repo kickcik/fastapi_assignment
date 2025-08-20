@@ -1,7 +1,7 @@
 # app/models/movies.py
 
 import random
-from typing import ClassVar, List, Any
+from typing import Any, ClassVar, List
 
 
 class MovieModel:

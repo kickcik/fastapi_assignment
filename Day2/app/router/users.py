@@ -1,15 +1,20 @@
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Path, Query
-from Day2.app.schemas.users import UserCreateSchema, UserResponse, UserUpdateSchema, UserSearchParams
+
 from Day2.app.models.users import UserModel
+from Day2.app.schemas.users import (
+    UserCreateSchema,
+    UserResponse,
+    UserSearchParams,
+    UserUpdateSchema,
+)
 
 user_router = APIRouter(prefix="/users", tags=["users"])
 
 
 @user_router.post("")  # 유저 생성
 def create_user(user: UserCreateSchema) -> int:
-    from Day2.app.models.users import UserModel
 
     new_user = UserModel(user.username, user.age, user.gender)
     return new_user.id

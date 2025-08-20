@@ -1,9 +1,14 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query, HTTPException, Path
+from fastapi import APIRouter, HTTPException, Path, Query
 
 from Day2.app.models.movies import MovieModel
-from Day2.app.schemas.movies import MovieResponse, CreateMovieRequest, MovieSearchParams, MovieUpdateParams
+from Day2.app.schemas.movies import (
+    CreateMovieRequest,
+    MovieResponse,
+    MovieSearchParams,
+    MovieUpdateParams,
+)
 
 movie_router = APIRouter(prefix="/movies", tags=["movies"])
 
