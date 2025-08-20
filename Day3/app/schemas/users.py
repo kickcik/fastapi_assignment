@@ -32,6 +32,7 @@ class UserSearchParams(BaseModel):
 class UserResponse(BaseModel):
     id: int
     username: str
+    password: str
     age: int
     gender: GenderName
 
