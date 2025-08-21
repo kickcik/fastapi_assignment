@@ -1,0 +1,24 @@
+1. tortoise
+- 사실 기억나는 다른 점들은 많이 없으나, tortoise-orm과 Django의 거의 일치하는 문법(?)이 가장 메리트인 것 같다.
+- 모델을 정의할 때, Primary Key에 autoincrement를 사용하면 좋은 점 (기술 심화)
+    - 실제 Internal level에 Physical data가 쓰일 때, 디스크는 무작위 입출력보다 순차 입출력이 훨씬 빠르다.
+    - 그렇기에 cache 특성을 띄는 작업에서 더욱 빠른 성능을 기대할 수 있다.
+
+2. aerich
+- tortoise에서 사용하는 마이그레이션 도구이다.
+- 다른 스키마 버전 도구와 같이 모델이 수정될 때, 그 변화를 모델만이 아닌 실제 DB에 적용시켜준다.
+- 사용법
+    1. aerich init -t app.config.TORTOISE_ORM과 같이 실제 TORTOISE_ORM이 지정된 경로를 입력해서 초기화해준다
+        -> 이때 마이그레이션 파일이 생성된다.
+    2. aerich init-db 를 통해 DB에 aerich 테이블이 등록된다.
+    3. aerich upgrade (적용) 또는 aerich downgrade (롤백)
+
+3. test 환경 조성
+- 테스트를 비동기로 처리하기 위해 httpx 설치
+- tortoise를 pytest로 테스트 하기 위해서 pytest가 가장 먼저 인식하는 conftest.py에서
+  initialize 함수에 decorator로 pytest.fixture의 스코프가 session일 때 실행되도록 설정
+- initialize 함수, pytest 비동기 입출력 모두 자동으로 이벤트 루프가 생성되므로, pytest의 비동기 입출력을 재정의(pass)
+
+4. CI 조정
+- CI에서 test 진행시 접근할 mysql이 없어 에러가 발생, mysql 설치 구문 추가
+- ENV 블록의 변수로 설정을 넘겨준다.
