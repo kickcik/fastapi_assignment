@@ -3,8 +3,7 @@
 
 from fastapi import FastAPI
 
-from Day4.app.models.movies import MovieModel
-from Day4.app.models.users import UserModel
+from Day4.app.configs.database import initialize_tortoise
 from Day4.app.routers.movies import movie_router
 from Day4.app.routers.users import user_router
 
@@ -14,8 +13,7 @@ app = FastAPI()
 app.include_router(user_router)
 app.include_router(movie_router)
 
-UserModel.create_dummy()  # API 테스트를 위한 더미를 생성하는 메서드 입니다.
-MovieModel.create_dummy()
+initialize_tortoise(app=app)
 
 
 @app.get("/")

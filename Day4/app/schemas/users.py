@@ -17,8 +17,8 @@ class UserCreateSchema(BaseModel):
 
 class UserUpdateSchema(BaseModel):
     username: str | None = None
+    password: str | None = None
     age: int | None = None
-    gender: GenderName | None = None
 
 
 class UserSearchParams(BaseModel):
@@ -32,7 +32,6 @@ class UserSearchParams(BaseModel):
 class UserResponse(BaseModel):
     id: int
     username: str
-    password: str
     age: int
     gender: GenderName
 
