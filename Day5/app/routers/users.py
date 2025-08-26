@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
-from Day4.app.utils.auth import authenticate, get_current_user, hash_password
-from Day4.app.utils.jwt import create_access_token
+from Day5.app.utils.auth import authenticate, get_current_user, hash_password
+from Day5.app.utils.jwt import create_access_token
 from Day5.app.models.users import User
 from Day5.app.schemas.users import (
     Token,
