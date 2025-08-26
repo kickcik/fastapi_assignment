@@ -5,8 +5,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
-from Day5.app.utils.auth import authenticate, get_current_user, hash_password
-from Day5.app.utils.jwt import create_access_token
 from Day5.app.models.users import User
 from Day5.app.schemas.users import (
     Token,
@@ -15,7 +13,9 @@ from Day5.app.schemas.users import (
     UserSearchParams,
     UserUpdateSchema,
 )
+from Day5.app.utils.auth import authenticate, get_current_user, hash_password
 from Day5.app.utils.file import delete_file, upload_file, validate_image_extension
+from Day5.app.utils.jwt import create_access_token
 
 user_router = APIRouter(prefix="/users", tags=["users"])
 
