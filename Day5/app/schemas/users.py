@@ -34,6 +34,7 @@ class UserResponse(BaseModel):
     username: str
     age: int
     gender: GenderName
+    profile_image_url: str | None = None
 
     model_config = {"from_attributes": True}  # from_orm 대신
 

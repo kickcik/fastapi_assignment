@@ -16,6 +16,7 @@ class User(BaseModel, Model):
     age = fields.IntField()
     gender = fields.CharEnumField(GenderName)
     last_login = fields.DatetimeField(null=True)
+    profile_image_url = fields.CharField(max_length=255, null=True)
 
     class Meta:
         table = "users"

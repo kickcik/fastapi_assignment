@@ -1,10 +1,12 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
+from Day4.app.utils.auth import authenticate, get_current_user, hash_password
+from Day4.app.utils.jwt import create_access_token
 from Day5.app.models.users import User
 from Day5.app.schemas.users import (
     Token,
@@ -13,8 +15,7 @@ from Day5.app.schemas.users import (
     UserSearchParams,
     UserUpdateSchema,
 )
-from Day4.app.utils.auth import authenticate, get_current_user, hash_password
-from Day4.app.utils.jwt import create_access_token
+from Day5.app.utils.file import delete_file, upload_file, validate_image_extension
 
 user_router = APIRouter(prefix="/users", tags=["users"])
 
@@ -78,3 +79,26 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
     user.last_login = datetime.now()
     await user.save()
     return Token(access_token=access_token, token_type="bearer")
+
+
+@user_router.post("/me/profile_image", status_code=200)
+async def register_profile_image(image: UploadFile, user: Annotated[User, Depends(get_current_user)]) -> UserResponse:
+    validate_image_extension(image)
+    prev_image_url = user.profile_image_url
+    try:
+        image_url = await upload_file(image, "users/profile_images")
+        user.profile_image_url = image_url
+        await user.save()
+
+        if prev_image_url is not None:
+            delete_file(prev_image_url)
+
+        return UserResponse(
+            id=user.id,
+            username=user.username,
+            age=user.age,
+            gender=user.gender,
+            profile_image_url=user.profile_image_url,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

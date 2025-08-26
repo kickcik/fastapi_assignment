@@ -20,6 +20,7 @@ class MovieResponse(BaseModel):
     cast: Dict[str, Any]
     playtime: int
     genre: GenreEnum
+    poster_image_url: str | None = None
 
     model_config = {"from_attributes": True}  # from_orm 대신
 

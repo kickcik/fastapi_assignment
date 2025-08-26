@@ -5,8 +5,8 @@ from tortoise.contrib.fastapi import register_tortoise
 from Day5.app.configs import config
 
 TORTOISE_APP_MODELS = [
-    "Day4.app.models.movies",
-    "Day4.app.models.users",
+    "Day5.app.models.movies",
+    "Day5.app.models.users",
     "aerich.models",
 ]
 
