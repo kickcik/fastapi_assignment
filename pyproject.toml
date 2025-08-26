@@ -21,6 +21,7 @@ tortoise-orm = {extras = ["asyncmy"], version = "^0.25.1"}
 cryptography = "^45.0.6"
 aerich = "^0.9.1"
 tomlkit = "^0.13.3"
+python-multipart = "^0.0.20"
 
 
 [tool.poetry.group.dev.dependencies]
