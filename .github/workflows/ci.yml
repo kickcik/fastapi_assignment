@@ -61,7 +61,7 @@ jobs:
       MYSQL_HOST: 127.0.0.1
       MYSQL_USER: root
       MYSQL_PASSWORD: passwd
-      MYSQL_DATABASE: when2meet_vod
+      MYSQL_DATABASE: fastapi_assignment
       MYSQL_PORT: 3306
     steps:
       - name: Check out the codes
