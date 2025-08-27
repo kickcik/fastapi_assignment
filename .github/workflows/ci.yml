@@ -58,11 +58,11 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     env:
-      MYSQL_HOST: 127.0.0.1
-      MYSQL_USER: root
-      MYSQL_PASSWORD: passwd
-      MYSQL_DATABASE: fastapi_assignment
-      MYSQL_PORT: 3306
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
     steps:
       - name: Check out the codes
         uses: actions/checkout@v2
