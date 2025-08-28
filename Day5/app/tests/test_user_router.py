@@ -35,13 +35,6 @@ class TestUserRouter(TestCase):
         finalizer()
         super().tearDownClass()
 
-    # async def check_db():
-    #     await Tortoise.init(db_url=DB_URL, modules={"models": ["Day5.app.models.users"]})
-    #     print(await Tortoise.get_connection("default").execute_query("SELECT DATABASE();"))
-    #     await Tortoise.close_connections()
-    #
-    # asyncio.run(check_db())
-
     async def test_api_get_all_users(self) -> None:
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app),
