@@ -195,3 +195,67 @@ class TestUserRouter(TestCase):
         self.assertEqual(response_me.status_code, 200)
         response_body = response_me.json()
         self.assertEqual(response_body["detail"], "Successfully Deleted.")
+
+    async def test_api_search_users(self) -> None:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
+        ) as client:
+            user_create_response = await client.post(
+                "/users",
+                json={
+                    "username": (username := "test1"),
+                    "password": "1234",
+                    "age": (age := 20),
+                    "gender": (gender := "male"),
+                },
+            )
+            id = int(user_create_response.text)
+            await client.post(
+                "/users",
+                json={
+                    "username": "test2",
+                    "password": "12345",
+                    "age": 25,
+                    "gender": "female",
+                },
+            )
+
+            search_user_response = await client.get(
+                "/users/search", params={"username": username, "age": age, "gender": gender}
+            )
+        self.assertEqual(search_user_response.status_code, 200)
+        response_body = search_user_response.json()[0]
+        self.assertEqual(response_body["id"], id)
+        self.assertEqual(response_body["username"], username)
+        self.assertEqual(response_body["age"], age)
+        self.assertEqual(response_body["gender"], gender)
+
+    async def test_api_search_users_none(self) -> None:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
+        ) as client:
+            await client.post(
+                "/users",
+                json={
+                    "username": "test1",
+                    "password": "1234",
+                    "age": 20,
+                    "gender": "male",
+                },
+            )
+            await client.post(
+                "/users",
+                json={
+                    "username": "test2",
+                    "password": "12345",
+                    "age": 25,
+                    "gender": "female",
+                },
+            )
+
+            search_user_response = await client.get(
+                "/users/search", params={"username": "safvads", "age": 999, "gender": "male"}
+            )
+        self.assertEqual(search_user_response.status_code, 404)
