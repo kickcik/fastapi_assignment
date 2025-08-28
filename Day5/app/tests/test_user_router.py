@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from tortoise.contrib.test import TestCase, finalizer, initializer
 
 from Day5.app.main import app
+from Day5.app.models.users import User
+from Day5.app.utils.auth import verify_password
 
 load_dotenv()
 
@@ -130,3 +132,41 @@ class TestUserRouter(TestCase):
         self.assertEqual(response_body["username"], username)
         self.assertEqual(response_body["age"], age)
         self.assertEqual(response_body["gender"], gender)
+
+    async def test_api_update_user(self) -> None:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
+        ) as client:
+            # Given
+            user_create_response = await client.post(
+                "/users",
+                json={
+                    "username": (username := "test"),
+                    "password": (password := "1234"),
+                    "age": (age := 20),
+                    "gender": (gender := "male"),
+                },
+            )
+            id = int(user_create_response.text)
+
+            login_user = await client.post("/users/login", data={"username": username, "password": password})
+            access_token = login_user.json()["access_token"]
+
+            response_me = await client.patch(
+                "/users/me",
+                headers={"Authorization": f"Bearer {access_token}"},
+                json={
+                    "username": (new_username := "new_username"),
+                    "password": (new_password := "new_password"),
+                    "age": (new_age := age + 1),
+                },
+            )
+        self.assertEqual(response_me.status_code, 200)
+        response_body = response_me.json()
+        response_body["hashed_password"] = (await User.get(id=id)).hashed_password
+        self.assertEqual(response_body["id"], id)
+        self.assertEqual(response_body["username"], new_username)
+        self.assertEqual(response_body["age"], new_age)
+        self.assertEqual(response_body["gender"], gender)
+        self.assertTrue(verify_password(new_password, response_body["hashed_password"]))
