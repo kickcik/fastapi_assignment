@@ -164,9 +164,8 @@ class TestUserRouter(TestCase):
             )
         self.assertEqual(response_me.status_code, 200)
         response_body = response_me.json()
-        response_body["hashed_password"] = (await User.get(id=id)).hashed_password
         self.assertEqual(response_body["id"], id)
         self.assertEqual(response_body["username"], new_username)
         self.assertEqual(response_body["age"], new_age)
         self.assertEqual(response_body["gender"], gender)
-        self.assertTrue(verify_password(new_password, response_body["hashed_password"]))
+        self.assertTrue(verify_password(new_password, (await User.get(id=id)).hashed_password))
