@@ -34,15 +34,16 @@ class TestUserRouter(TestCase):
     def tearDownClass(cls) -> None:
         finalizer()
         super().tearDownClass()
-    async def test_main_get_index(self):
+
+    async def test_main_get_index(self) -> None:
         async with httpx.AsyncClient(
-                transport=httpx.ASGITransport(app=app),
-                base_url="http://test",
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
         ) as client:
             response = await client.get("/")
         self.assertEqual(response.status_code, 200)
         response_body = response.json()
-        self.assertEqual(response_body['message'], "Hello World")
+        self.assertEqual(response_body["message"], "Hello World")
 
     async def test_api_get_all_users(self) -> None:
         async with httpx.AsyncClient(
