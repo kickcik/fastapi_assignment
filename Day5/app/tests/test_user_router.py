@@ -34,7 +34,7 @@ class TestUserRouter(TestCase):
     def tearDownClass(cls) -> None:
         finalizer()
         super().tearDownClass()
-    async def test_api_get_index(self):
+    async def test_main_get_index(self):
         async with httpx.AsyncClient(
                 transport=httpx.ASGITransport(app=app),
                 base_url="http://test",
