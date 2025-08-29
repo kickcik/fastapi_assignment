@@ -337,3 +337,47 @@ class TestUserRouter(TestCase):
         self.assertEqual(response_body["age"], age)
         self.assertEqual(response_body["gender"], gender)
         self.assertIsNotNone(response_body["profile_image_url"])
+
+    async def test_api_register_profile_image_prev_url_not_none(self) -> None:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
+        ) as client:
+            create_user = await client.post(
+                "/users",
+                json={
+                    "username": (username := "test_profile_image"),
+                    "password": (password := "1234"),
+                    "age": (age := 20),
+                    "gender": (gender := "female"),
+                },
+            )
+            id = int(create_user.text)
+            user = await client.post("/users/login", data={"username": username, "password": password})
+            access_token = user.json()["access_token"]
+
+            image_path = Path(__file__).parent / "../../test_image/image_for_test.jpg"
+            with image_path.open("rb") as f:
+                file_bytes = io.BytesIO(f.read())
+
+            files = {"image": ("test_image.png", file_bytes, "image/png")}
+
+            await client.post(
+                "/users/me/profile_image",
+                files=files,
+                data={"username": username, "password": password},
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+            user = await client.post(
+                "/users/me/profile_image",
+                files=files,
+                data={"username": username, "password": password},
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+        self.assertEqual(user.status_code, 200)
+        response_body = user.json()
+        self.assertEqual(response_body["id"], id)
+        self.assertEqual(response_body["username"], username)
+        self.assertEqual(response_body["age"], age)
+        self.assertEqual(response_body["gender"], gender)
+        self.assertIsNotNone(response_body["profile_image_url"])
