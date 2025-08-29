@@ -6,7 +6,6 @@ import httpx
 from dotenv import load_dotenv
 from tortoise.contrib.test import TestCase, finalizer, initializer
 
-from Day5.app.configs import config
 from Day5.app.main import app
 from Day5.app.models.users import User
 from Day5.app.utils.auth import verify_password
@@ -319,7 +318,7 @@ class TestUserRouter(TestCase):
             user = await client.post("/users/login", data={"username": username, "password": password})
             access_token = user.json()["access_token"]
 
-            image_path = Path(__file__).parent / '../../test_image/image_for_test.jpg'
+            image_path = Path(__file__).parent / "../../test_image/image_for_test.jpg"
             with image_path.open("rb") as f:
                 file_bytes = io.BytesIO(f.read())
 
