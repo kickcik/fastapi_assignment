@@ -1,4 +1,6 @@
+import io
 import os
+from pathlib import Path
 
 import httpx
 from dotenv import load_dotenv
@@ -297,3 +299,40 @@ class TestUserRouter(TestCase):
                 "/users/search", params={"username": "safvads", "age": 999, "gender": "male"}
             )
         self.assertEqual(search_user_response.status_code, 404)
+
+    async def test_api_register_profile_image(self) -> None:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
+        ) as client:
+            create_user = await client.post(
+                "/users",
+                json={
+                    "username": (username := "test_profile_image"),
+                    "password": (password := "1234"),
+                    "age": (age := 20),
+                    "gender": (gender := "female"),
+                },
+            )
+            id = int(create_user.text)
+            user = await client.post("/users/login", data={"username": username, "password": password})
+            access_token = user.json()["access_token"]
+
+            image_path = Path("C:/Users/47780/OneDrive/바탕 화면/class/image.jpg")
+            with image_path.open("rb") as f:
+                file_bytes = io.BytesIO(f.read())
+
+            files = {"image": ("test_image.png", file_bytes, "image/png")}
+
+            user = await client.post('/users/me/profile_image',
+                                             files=files,
+                                             data={"username": username, "password": password},
+                                             headers={"Authorization": f"Bearer {access_token}"}
+                                             )
+        self.assertEqual(user.status_code, 200)
+        response_body = user.json()
+        self.assertEqual(response_body["id"], id)
+        self.assertEqual(response_body["username"], username)
+        self.assertEqual(response_body["age"], age)
+        self.assertEqual(response_body['gender'], gender)
+        self.assertIsNotNone(response_body["profile_image_url"])
