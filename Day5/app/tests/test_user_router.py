@@ -108,6 +108,44 @@ class TestUserRouter(TestCase):
         response_body = user.json()
         self.assertIsNotNone(response_body["access_token"])
 
+    async def test_api_get_token_by_login_none(self) -> None:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app),
+            base_url="http://test",
+        ) as client:
+            # Given
+            await client.post(
+                "/users",
+                json={
+                    "username": (username := "login_none_test"),
+                    "password": (password := "1234"),
+                    "age": 20,
+                    "gender": "male",
+                },
+            )
+            user1 = await client.post(
+                "/users/login",
+                data={
+                    "username": "fadsadsa",
+                    "password": password,
+                },
+            )
+            user2 = await client.post(
+                "/users/login",
+                data={
+                    "username": username,
+                    "password": "12345",
+                },
+            )
+
+        self.assertEqual(user1.status_code, 401)
+        response_body = user1.json()
+        self.assertEqual(response_body["detail"], "username: fadsadsa - not found.")
+
+        self.assertEqual(user2.status_code, 401)
+        response_body = user2.json()
+        self.assertEqual(response_body["detail"], "password incorrect.")
+
     async def test_api_get_user(self) -> None:
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app),
