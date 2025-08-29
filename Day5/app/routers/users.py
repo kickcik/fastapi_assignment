@@ -3,7 +3,6 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
-from starlette import status
 
 from Day5.app.models.users import User
 from Day5.app.schemas.users import (
@@ -69,12 +68,7 @@ async def search_users(params: Annotated[UserSearchParams, Query()]) -> list[Use
 @user_router.post("/login", response_model=Token)
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = await authenticate(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+
     access_token = create_access_token(data={"user_id": user.id})
     user.last_login = datetime.now()
     await user.save()
