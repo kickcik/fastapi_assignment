@@ -1,3 +1,3 @@
-from Day4.app.configs.base import Config
+from Day5.app.configs.base import Config
 
 config = Config()
