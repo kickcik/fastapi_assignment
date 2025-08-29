@@ -324,15 +324,16 @@ class TestUserRouter(TestCase):
 
             files = {"image": ("test_image.png", file_bytes, "image/png")}
 
-            user = await client.post('/users/me/profile_image',
-                                             files=files,
-                                             data={"username": username, "password": password},
-                                             headers={"Authorization": f"Bearer {access_token}"}
-                                             )
+            user = await client.post(
+                "/users/me/profile_image",
+                files=files,
+                data={"username": username, "password": password},
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
         self.assertEqual(user.status_code, 200)
         response_body = user.json()
         self.assertEqual(response_body["id"], id)
         self.assertEqual(response_body["username"], username)
         self.assertEqual(response_body["age"], age)
-        self.assertEqual(response_body['gender'], gender)
+        self.assertEqual(response_body["gender"], gender)
         self.assertIsNotNone(response_body["profile_image_url"])
