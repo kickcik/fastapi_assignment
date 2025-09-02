@@ -38,7 +38,7 @@ async def read_movie(movie_id: int = Path(gt=0)) -> MovieResponse:
 async def update_movie(data: MovieUpdateParams, movie_id: int = Path(gt=0)) -> MovieResponse:
     if movie := await Movie.get_or_none(id=movie_id):
         valid_params = {key: value for key, value in data.model_dump().items() if value is not None}
-        await movie.update_from_dict(**valid_params)
+        await movie.update_from_dict(valid_params)
         await movie.save()
         return MovieResponse.model_validate(movie)
     else:

@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from tortoise import Model, fields
 
@@ -21,7 +21,7 @@ class GenreEnum(StrEnum):
 class Movie(BaseModel, Model):
     title = fields.CharField(max_length=255)
     plot = fields.TextField()
-    cast: Dict[str, Any] = fields.JSONField()
+    cast: List[Dict[str, Any]] = fields.JSONField()
     playtime = fields.IntField()
     genre = fields.CharEnumField(GenreEnum)
     poster_image_url = fields.CharField(max_length=255, null=True)
