@@ -4,3 +4,4 @@ __pycache__
 .env
 .dmypy.json
 **/media
+Day5/test_image/
