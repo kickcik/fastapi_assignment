@@ -11,6 +11,7 @@ from Day5.app.configs import config
 
 IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif"]
 
+
 class FileExtensionError(Exception):
     def __init__(self, valid_extensions: list[str]):
         super().__init__(f"not allowed extension. available extensions: {valid_extensions}")

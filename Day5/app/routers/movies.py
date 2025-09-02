@@ -52,6 +52,7 @@ async def delete_movie(movie_id: int = Path(gt=0)) -> None:
     else:
         raise HTTPException(status_code=404, detail="Movie not found")
 
+
 @movie_router.post("/{movie_id}/poster_image", response_model=MovieResponse, status_code=201)
 async def register_poster_image(image: UploadFile, movie_id: int = Path(gt=0)) -> MovieResponse:
     validate_image_extension(image)
