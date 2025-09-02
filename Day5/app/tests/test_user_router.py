@@ -1,14 +1,16 @@
-import io
 import os
-from pathlib import Path
 
 import httpx
 from dotenv import load_dotenv
+from starlette import status
 from tortoise.contrib.test import TestCase, finalizer, initializer
 
+from Day5.app.configs import config
 from Day5.app.main import app
-from Day5.app.models.users import User
+from Day5.app.models.users import GenderName, User
+from Day5.app.tests.utils.fake_file import fake_image, fake_txt_file
 from Day5.app.utils.auth import verify_password
+from Day5.app.utils.file import IMAGE_EXTENSIONS
 
 load_dotenv()
 
@@ -300,43 +302,78 @@ class TestUserRouter(TestCase):
             )
         self.assertEqual(search_user_response.status_code, 404)
 
-    async def test_api_register_profile_image(self) -> None:
-        async with httpx.AsyncClient(
-            transport=httpx.ASGITransport(app=app),
-            base_url="http://test",
-        ) as client:
-            create_user = await client.post(
-                "/users",
+    async def test_api_register_user_profile_image(self) -> None:
+        # given
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+            create_response = await client.post(
+                url="/users",
                 json={
-                    "username": (username := "test_profile_image"),
-                    "password": (password := "1234"),
-                    "age": (age := 20),
-                    "gender": (gender := "female"),
+                    "username": "testuser",
+                    "password": (password := "password123"),
+                    "age": 20,
+                    "gender": GenderName.male,
                 },
             )
-            id = int(create_user.text)
-            user = await client.post("/users/login", data={"username": username, "password": password})
-            access_token = user.json()["access_token"]
+            user_id = create_response.json()
+            user = await User.get(id=user_id)
 
-            image_path = Path(__file__).parent / "../../test_image/image_for_test.jpg"
-            with image_path.open("rb") as f:
-                file_bytes = io.BytesIO(f.read())
+            login_user = await client.post("/users/login", data={"username": user.username, "password": password})
+            access_token = login_user.json()["access_token"]
 
-            files = {"image": ("test_image.png", file_bytes, "image/png")}
-
-            user = await client.post(
+            # when
+            response = await client.post(
                 "/users/me/profile_image",
-                files=files,
-                data={"username": username, "password": password},
+                files={"image": ((image := "test_image.png"), fake_image(), "image/png")},
                 headers={"Authorization": f"Bearer {access_token}"},
             )
-        self.assertEqual(user.status_code, 200)
-        response_body = user.json()
-        self.assertEqual(response_body["id"], id)
-        self.assertEqual(response_body["username"], username)
-        self.assertEqual(response_body["age"], age)
-        self.assertEqual(response_body["gender"], gender)
-        self.assertIsNotNone(response_body["profile_image_url"])
+
+        # then
+        assert response.status_code == status.HTTP_200_OK
+        response_json = response.json()
+
+        assert f"users/profile_images/{image.rsplit(".")[0]}" in response_json["profile_image_url"]
+        assert image.rsplit(".")[1] in response_json["profile_image_url"]
+
+        await user.refresh_from_db()
+        assert response_json["profile_image_url"] == user.profile_image_url
+
+        saved_file_path = os.path.join(config.MEDIA_DIR, user.profile_image_url)
+        # 파일이 저장되었는지 확인
+        assert os.path.exists(saved_file_path)
+
+        # 리소스 정리
+        os.remove(saved_file_path)
+
+    async def test_api_register_user_profile_image_when_file_has_unavailable_extension(self) -> None:
+        # given
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://test") as client:
+            create_response = await client.post(
+                url="/users",
+                json={
+                    "username": "testuser",
+                    "password": (password := "password123"),
+                    "age": 20,
+                    "gender": GenderName.male,
+                },
+            )
+            user_id = create_response.json()
+            user = await User.get(id=user_id)
+
+            login_user = await client.post("/users/login", data={"username": user.username, "password": password})
+            access_token = login_user.json()["access_token"]
+
+            # when
+            response = await client.post(
+                "/users/me/profile_image",
+                files={"image": ("test_file.txt", fake_txt_file(), "text/plain")},
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+
+        # then
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        response_json = response.json()
+
+        assert response_json["detail"] == f"invalid image extension. enable extension: {IMAGE_EXTENSIONS}"
 
     async def test_api_register_profile_image_prev_url_not_none(self) -> None:
         async with httpx.AsyncClient(
@@ -356,26 +393,18 @@ class TestUserRouter(TestCase):
             user = await client.post("/users/login", data={"username": username, "password": password})
             access_token = user.json()["access_token"]
 
-            image_path = Path(__file__).parent / "../../test_image/image_for_test.jpg"
-            with image_path.open("rb") as f:
-                file_bytes = io.BytesIO(f.read())
-
-            files = {"image": ("test_image.png", file_bytes, "image/png")}
-
             await client.post(
                 "/users/me/profile_image",
-                files=files,
-                data={"username": username, "password": password},
+                files={"image": ("test_image.png", fake_image(), "image/png")},
                 headers={"Authorization": f"Bearer {access_token}"},
             )
-            user = await client.post(
+            response = await client.post(
                 "/users/me/profile_image",
-                files=files,
-                data={"username": username, "password": password},
+                files={"image": ("test_image.png", fake_image(), "image/png")},
                 headers={"Authorization": f"Bearer {access_token}"},
             )
-        self.assertEqual(user.status_code, 200)
-        response_body = user.json()
+        self.assertEqual(response.status_code, 200)
+        response_body = response.json()
         self.assertEqual(response_body["id"], id)
         self.assertEqual(response_body["username"], username)
         self.assertEqual(response_body["age"], age)
