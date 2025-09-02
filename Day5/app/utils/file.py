@@ -2,12 +2,23 @@
 
 import os
 import uuid
+from pathlib import Path
+from typing import Union
 
 from fastapi import HTTPException, UploadFile
 
 from Day5.app.configs import config
 
 IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif"]
+
+class FileExtensionError(Exception):
+    def __init__(self, valid_extensions: list[str]):
+        super().__init__(f"not allowed extension. available extensions: {valid_extensions}")
+
+
+class FileDoesNotExist(Exception):
+    def __init__(self, file_path: Union[str, Path]):
+        super().__init__(f"file does not exist: {file_path}")
 
 
 async def upload_file(file: UploadFile, upload_dir: str) -> str:
