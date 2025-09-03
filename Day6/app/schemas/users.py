@@ -1,0 +1,44 @@
+from enum import Enum
+
+from pydantic import BaseModel
+
+
+class GenderName(str, Enum):
+    male = "male"
+    female = "female"
+
+
+class UserCreateSchema(BaseModel):
+    username: str
+    password: str
+    age: int
+    gender: GenderName
+
+
+class UserUpdateSchema(BaseModel):
+    username: str | None = None
+    password: str | None = None
+    age: int | None = None
+
+
+class UserSearchParams(BaseModel):
+    model_config = {"extra": "forbid"}
+
+    username: str | None = None
+    age: int | None = None
+    gender: GenderName | None = None
+
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    age: int
+    gender: GenderName
+    profile_image_url: str | None = None
+
+    model_config = {"from_attributes": True}  # from_orm 대신
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
