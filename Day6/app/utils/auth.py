@@ -6,8 +6,9 @@ from jwt import InvalidTokenError
 from passlib.context import CryptContext  # type: ignore
 from starlette import status
 
+from Day6.app.configs import config
 from Day6.app.models.users import User
-from Day6.app.utils.jwt import ALGORITHM, SECRET_KEY, oauth2_scheme
+from Day6.app.utils.jwt import oauth2_scheme
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -19,7 +20,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        assert config.JWT_ALGORITHM is not None
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.JWT_ALGORITHM])  # type: ignore[arg-type]
         user_id = payload.get("user_id")
         if user_id is None:
             raise credentials_exception

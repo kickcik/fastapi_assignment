@@ -10,8 +10,8 @@ load_dotenv()
 class Config(BaseSettings):
     SECRET_KEY: str | None = os.getenv("SECRET_KEY")
 
-    JWT_ALGORITHM: str | None = os.getenv("JWT_ALGORITHM", "HS256")
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int | None = 30
+    JWT_ALGORITHM: str | None = os.getenv("JWT_ALGORITHM")
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES"))  # type: ignore[arg-type]
 
     MYSQL_HOST: str | None = os.getenv("MYSQL_HOST")
     MYSQL_PORT: int = int(os.getenv("MYSQL_PORT", "3306"))
