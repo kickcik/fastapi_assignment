@@ -410,3 +410,7 @@ class TestUserRouter(TestCase):
         self.assertEqual(response_body["age"], age)
         self.assertEqual(response_body["gender"], gender)
         self.assertIsNotNone(response_body["profile_image_url"])
+
+        saved_file_path = os.path.join(config.MEDIA_DIR, response_body["profile_image_url"])
+        assert os.path.exists(saved_file_path)
+        os.remove(saved_file_path)
