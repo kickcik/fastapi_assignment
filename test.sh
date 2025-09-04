@@ -12,8 +12,14 @@ poetry run ruff check --select I --fix
 poetry run ruff check --fix
 echo "OK"
 
-echo "Starting mypy"
-poetry run dmypy run -- .
+echo "Starting dmypy"
+if poetry run dmypy status > /dev/null 2>&1; then
+    poetry run dmypy run -- .
+else
+    echo "Succeeding daemon's body..."
+    echo "mypy is coming..."
+    poetry run mypy .
+fi
 echo "OK"
 
 echo "Starting pytest with coverage"
