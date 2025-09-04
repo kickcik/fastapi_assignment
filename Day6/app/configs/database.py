@@ -7,6 +7,8 @@ from Day6.app.configs import config
 TORTOISE_APP_MODELS = [
     "Day6.app.models.movies",
     "Day6.app.models.users",
+    "Day6.app.models.reviews",
+    'Day6.app.models.likes',
     "aerich.models",
 ]
 
