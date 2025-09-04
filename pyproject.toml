@@ -53,7 +53,8 @@ omit = ["*/test_*.py"]
 [tool.pytest.ini_options]
 asyncio_mode = 'auto'
 asyncio_default_fixture_loop_scope = 'session'
+
 [tool.aerich]
-tortoise_orm = "Day5.app.configs.database.TORTOISE_ORM"
+tortoise_orm = "Day6.app.configs.database.TORTOISE_ORM"
 location = "./migrations"
 src_folder = "./."
