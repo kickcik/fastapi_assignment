@@ -1,9 +1,13 @@
+import os
 from datetime import datetime, timedelta, timezone
 
 import jwt
+from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 
-SECRET_KEY = "bs3nfhm73asc1z62na1bn4dgs9af41s65d"
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
