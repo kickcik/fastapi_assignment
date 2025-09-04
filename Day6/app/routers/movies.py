@@ -3,12 +3,14 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Path, Query, UploadFile
 
 from Day6.app.models.movies import Movie
+from Day6.app.models.reviews import Review
 from Day6.app.schemas.movies import (
     CreateMovieRequest,
     MovieResponse,
     MovieSearchParams,
     MovieUpdateParams,
 )
+from Day6.app.schemas.reviews import ReviewResponse
 from Day6.app.utils.file import delete_file, upload_file, validate_image_extension
 
 movie_router = APIRouter(prefix="/movies", tags=["movies"])
@@ -72,3 +74,10 @@ async def register_poster_image(image: UploadFile, movie_id: int = Path(gt=0)) -
         return MovieResponse.model_validate(movie)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@movie_router.get("/{movie_id}/reviews", status_code=200)
+async def get_movie_reviews(movie_id: int = Path(gt=0)) -> list[ReviewResponse]:
+    if reviews := await Review.filter(movie_id=movie_id).all():
+        return [ReviewResponse.model_validate(review) for review in reviews]
+    raise HTTPException(status_code=404, detail="No reviews found")

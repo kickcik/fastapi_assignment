@@ -4,7 +4,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 
+from Day6.app.models.reviews import Review
 from Day6.app.models.users import User
+from Day6.app.schemas.reviews import ReviewResponse
 from Day6.app.schemas.users import (
     Token,
     UserCreateSchema,
@@ -96,3 +98,10 @@ async def register_profile_image(image: UploadFile, user: Annotated[User, Depend
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@user_router.get("/me/reviews", status_code=200)
+async def get_review(user: Annotated[User, Depends(get_current_user)]) -> list[ReviewResponse]:
+    if reviews := await Review.filter(user_id=user.id).all():
+        return [ReviewResponse.model_validate(review) for review in reviews]
+    raise HTTPException(status_code=404, detail="No reviews found")
