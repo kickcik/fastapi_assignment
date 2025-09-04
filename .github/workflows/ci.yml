@@ -63,6 +63,9 @@ jobs:
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
       MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY}}
+      JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM}}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRE_MINUTES}}
     steps:
       - name: Check out the codes
         uses: actions/checkout@v2
